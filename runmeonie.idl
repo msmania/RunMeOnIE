@@ -1,0 +1,49 @@
+// runmeonie.idl : type library source for ActiveX Control project.
+
+// This file will be processed by the MIDL compiler tool to
+// produce the type library (runmeonie.tlb) that will become a resource in
+// runmeonie.ocx.
+
+#include <olectl.h>
+#include <idispids.h>
+
+[ uuid(E06F66E8-3A2E-45A1-BB38-BFFCFEA37E25), version(1.0),
+  control ]
+library runmeonieLib
+{
+	importlib(STDOLE_TLB);
+
+	//  Primary dispatch interface for CrunmeonieCtrl
+	[ 
+		uuid(2B3AE6CB-34E5-4F1B-99B7-B62E5C2075E8)	
+	]
+	dispinterface _Drunmeonie
+	{
+		properties:
+		methods:
+            [id(1)] ULONG Hello(BSTR Greeting);
+    };
+
+	//  Event dispatch interface for CrunmeonieCtrl
+
+	[ 
+		uuid(B596F9A3-1FE2-48B0-9510-A4D4D7942D6F)	
+	]
+	dispinterface _DrunmeonieEvents
+	{
+		properties:
+			//  Event interface has no properties
+
+		methods:
+	};
+
+	//  Class information for CrunmeonieCtrl
+	[
+		uuid(5C630378-A070-42A6-BFD5-C746F7DCAACC)
+	]
+	coclass runmeonie
+	{
+		[default] dispinterface _Drunmeonie;
+		[default, source] dispinterface _DrunmeonieEvents;
+	};
+};
