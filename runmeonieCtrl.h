@@ -51,5 +51,7 @@ public:
 protected:
     ULONG Hello(LPCTSTR Greeting);
 
+public:
+  afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 };
 

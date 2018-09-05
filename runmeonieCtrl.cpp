@@ -17,6 +17,7 @@ IMPLEMENT_DYNCREATE(CrunmeonieCtrl, COleControl)
 BEGIN_MESSAGE_MAP(CrunmeonieCtrl, COleControl)
 	ON_MESSAGE(OCM_COMMAND, &CrunmeonieCtrl::OnOcmCommand)
 	ON_OLEVERB(AFX_IDS_VERB_PROPERTIES, OnProperties)
+  ON_WM_CREATE()
 END_MESSAGE_MAP()
 
 // Dispatch map
@@ -113,7 +114,8 @@ void CrunmeonieCtrl::OnDraw(
 	if (!pdc)
 		return;
 
-	DoSuperclassPaint(pdc, rcBounds);
+	pdc->FillRect(rcBounds, CBrush::FromHandle((HBRUSH)GetStockObject(WHITE_BRUSH)));
+	pdc->Ellipse(rcBounds);
 }
 
 // CrunmeonieCtrl::DoPropExchange - Persistence support
@@ -188,4 +190,21 @@ ULONG CrunmeonieCtrl::Hello(LPCTSTR Greeting)
     ::AfxMessageBox(Greeting);
 
     return 42; // The answer is always 42.
+}
+
+
+int CrunmeonieCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+  if (COleControl::OnCreate(lpCreateStruct) == -1)
+    return -1;
+
+  HWND h = CreateWindow(L"BUTTON",
+                        L"!!",
+                        WS_CHILD | WS_VISIBLE,
+                        0, 0, 32, 32,
+                        m_hWnd,
+                        nullptr,
+                        AfxGetInstanceHandle(),
+                        nullptr);
+  return 0;
 }
