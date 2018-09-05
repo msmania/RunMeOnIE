@@ -5,6 +5,7 @@
 #include "runmeonieCtrl.h"
 #include "runmeoniePropPage.h"
 #include "afxdialogex.h"
+#include <mshtml.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -180,16 +181,55 @@ LRESULT CrunmeonieCtrl::OnOcmCommand(WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
+void Log(LPCWSTR format, ...) {
+  WCHAR linebuf[1024];
+  va_list v;
+  va_start(v, format);
+  wvsprintf(linebuf, format, v);
+  va_end(v);
+  OutputDebugString(linebuf);
+}
+
+void InvokeJavaScriptMethod(IHTMLDocument *document, OLECHAR *method) {
+  ATL::CComPtr<IDispatch> dispatch;
+  if (SUCCEEDED(document->get_Script(&dispatch))) {
+    COleDispatchDriver driver;
+    driver.AttachDispatch(dispatch);
+    DISPID id{};
+    if (SUCCEEDED(dispatch->GetIDsOfNames(IID_NULL,
+      &method,
+      1,
+      LOCALE_SYSTEM_DEFAULT,
+      &id))) {
+      TRY{
+        driver.InvokeHelper(id, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
+      }
+        CATCH(COleException, e) {
+        Log(L"COleException\n");
+      }
+      END_CATCH
+    }
+    driver.DetachDispatch();
+  }
+}
 
 // CrunmeonieCtrl message handlers
 
 ULONG CrunmeonieCtrl::Hello(LPCTSTR Greeting)
 {
-    AFX_MANAGE_STATE(AfxGetStaticModuleState());
-
-    ::AfxMessageBox(Greeting);
-
-    return 42; // The answer is always 42.
+  AFX_MANAGE_STATE(AfxGetStaticModuleState());
+  // https://code.msdn.microsoft.com/MFCSafeActiveX-690cd758/sourcecode?fileId=21807&pathId=571421019
+  ATL::CComPtr<IOleClientSite> site = GetClientSite();
+  if (site) {
+    ATL::CComPtr<IOleContainer> container;
+    if (SUCCEEDED(site->GetContainer(&container))) {
+      if (ATL::CComQIPtr<IHTMLDocument2> doc = container) {
+        ATL::CComBSTR copied(Greeting);
+        InvokeJavaScriptMethod(doc, copied);
+      }
+    }
+  }
+  return 42; // The answer is always 42.
 }
 
 

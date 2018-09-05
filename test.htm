@@ -4,15 +4,19 @@
 <meta http-equiv="x-ua-compatible" content="IE=edge" />
 <style type='text/css'>
 </style>
-<script type='text/javascript'>
+<script>
+function hello_callback() {
+  let o = document.body.appendChild(document.createElement('p'));
+  o.appendChild(document.createTextNode('Hello, ActiveX!'));
+}
+
 function hello() {
-    try {
-        var obj = document.getElementById('x');
-        obj.Hello('Hello, ActiveX!');
-    }
-    catch (e) {
-        alert(e);
-    }
+  try {
+    document.getElementById('x').Hello('hello_callback');
+  }
+  catch (e) {
+    alert(e);
+  }
 }
 </script>
 </head>
